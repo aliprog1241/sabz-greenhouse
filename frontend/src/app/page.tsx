@@ -1,15 +1,17 @@
-export default function Home() {
-  return (
-    <main className="min-h-screen bg-[var(--background)] px-6 py-20 text-[var(--foreground)]">
-      <section className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-[var(--brand-dark)] px-7 py-16 text-white shadow-2xl sm:px-12 lg:px-20">
-        <p className="mb-6 text-sm font-semibold tracking-[0.18em] text-[var(--brand-gold)]">SABZ GREENHOUSE</p>
-        <h1 className="max-w-3xl text-4xl font-bold leading-[1.45] sm:text-6xl">راهکارهای تخصصی برای گلخانه‌های حرفه‌ای</h1>
-        <p className="mt-8 max-w-2xl text-lg leading-9 text-white/75">زیرساخت اولیه پلتفرم خدمات، پروژه‌ها و کاتالوگ تجهیزات گلخانه‌ای آماده شده است. محتوای واقعی پس از تأیید مجموعه جایگزین می‌شود.</p>
-        <div className="mt-10 flex flex-wrap gap-4">
-          <span className="rounded-full bg-[var(--brand-gold)] px-6 py-3 font-bold text-[var(--brand-dark)]">مرحله M0 تکمیل زیرساخت</span>
-          <span className="rounded-full border border-white/25 px-6 py-3 text-white/80">بدون فروش آنلاین و پرداخت</span>
-        </div>
-      </section>
-    </main>
-  );
+import Link from "next/link";
+import { apiGet, resultsOf } from "@/lib/api";
+import type { Paginated, Product, Project, Service } from "@/types/api";
+import { ArrowLink, EmptyState } from "@/components/ui";
+
+export const dynamic = "force-dynamic";
+export default async function Home() {
+  const [pd,sd,jd]=await Promise.all([apiGet<Paginated<Product>>("/products/"),apiGet<Paginated<Service>>("/services/"),apiGet<Paginated<Project>>("/projects/")]);
+  const products=resultsOf(pd).slice(0,3),services=resultsOf(sd).slice(0,3),projects=resultsOf(jd).slice(0,2);
+  return <main>
+    <section className="shell py-10 sm:py-16"><div className="relative overflow-hidden rounded-[2.5rem] bg-forest px-7 py-16 text-white sm:px-14 sm:py-24 lg:px-20"><div className="absolute inset-0 opacity-60 [background:radial-gradient(circle_at_15%_80%,#35785b_0,transparent_34%),radial-gradient(circle_at_85%_15%,#d4ad63_0,transparent_24%)]"/><div className="relative max-w-4xl"><p className="text-sm font-black tracking-[.18em] text-gold">SABZ GREENHOUSE</p><h1 className="mt-6 text-4xl font-black leading-[1.35] sm:text-7xl">دانش تخصصی برای رشد پایدار گلخانه</h1><p className="mt-7 max-w-2xl text-lg leading-9 text-white/70">از بررسی مسئله و طراحی راهکار تا انتخاب تجهیزات؛ بستری یکپارچه برای شناخت خدمات و ثبت درخواست مستقیم.</p><div className="mt-10 flex flex-wrap gap-4"><Link className="rounded-full bg-gold px-6 py-4 font-black text-forest" href="/consultation">درخواست مشاوره</Link><Link className="rounded-full border border-white/25 px-6 py-4 font-bold" href="/products">مشاهده کاتالوگ</Link></div></div></div></section>
+    <section className="shell grid gap-6 py-14 md:grid-cols-3"><div><p className="eyebrow">مسیر همکاری</p><h2 className="mt-4 text-3xl font-black leading-normal text-forest">از مسئله واقعی تا راهکار قابل اجرا</h2></div>{["شرح نیاز و شرایط گلخانه","بررسی تخصصی و پیشنهاد مسیر"].map((x,i)=><div key={x} className="card"><span className="text-4xl font-black text-gold/60">۰{i+1}</span><h3 className="mt-10 text-xl font-black text-forest">{x}</h3></div>)}</section>
+    <section className="shell py-14"><div className="mb-8 flex items-end justify-between gap-5"><div><p className="eyebrow">خدمات</p><h2 className="mt-3 text-3xl font-black text-forest">خدمات تخصصی گلخانه</h2></div><ArrowLink href="/services">همه خدمات</ArrowLink></div>{services.length?<div className="grid gap-5 md:grid-cols-3">{services.map(s=><article className="card" key={s.id}><h3 className="text-xl font-black text-forest">{s.title}</h3><p className="mt-4 leading-8 text-ink/60">{s.summary||"شرح این خدمت پس از تکمیل محتوای تأییدشده نمایش داده می‌شود."}</p><div className="mt-8"><ArrowLink href={`/services/${s.slug}`}>جزئیات خدمت</ArrowLink></div></article>)}</div>:<EmptyState/>}</section>
+    <section className="bg-white/60 py-20"><div className="shell"><div className="mb-8 flex items-end justify-between"><div><p className="eyebrow">کاتالوگ</p><h2 className="mt-3 text-3xl font-black text-forest">محصولات منتخب</h2></div><ArrowLink href="/products">همه محصولات</ArrowLink></div>{products.length?<div className="grid gap-5 md:grid-cols-3">{products.map(p=><article className="card" key={p.id}><p className="text-sm font-bold text-leaf">{p.category.name}</p><h3 className="mt-3 text-xl font-black text-forest">{p.name}</h3><p className="mt-3 text-ink/55">{p.brand||"برند ثبت نشده"} · واحد {p.unit}</p><div className="mt-8"><ArrowLink href={`/products/${p.slug}`}>مشاهده و استعلام</ArrowLink></div></article>)}</div>:<EmptyState/>}</div></section>
+    <section className="shell py-20"><div className="mb-8"><p className="eyebrow">پروژه‌ها</p><h2 className="mt-3 text-3xl font-black text-forest">تجربه‌های ثبت‌شده</h2></div>{projects.length?<div className="grid gap-6 md:grid-cols-2">{projects.map(p=><article className="card" key={p.id}><h3 className="text-2xl font-black text-forest">{p.title}</h3><p className="mt-3 text-ink/55">{p.location||"موقعیت ثبت نشده"}</p><div className="mt-8"><ArrowLink href={`/projects/${p.slug}`}>مطالعه پروژه</ArrowLink></div></article>)}</div>:<EmptyState/>}</section>
+  </main>;
 }
