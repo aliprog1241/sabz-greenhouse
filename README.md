@@ -34,10 +34,16 @@ npm run dev
 
 ```powershell
 python backend\manage.py check
-python backend\manage.py test apps.core.tests
+python backend\manage.py test apps.core apps.catalog apps.leads --settings=config.settings_test
 Set-Location frontend
 npm run lint
 npm run build
 ```
 
 هیچ secret واقعی نباید commit شود. فایل `.env` محلی است و از Git خارج شده است.
+
+## وضعیت توسعه
+
+- M0: زیرساخت مونوریپو و محیط اجرا تکمیل شده است.
+- M1: مدل‌های دامنه، migrationها و Django Admin تکمیل شده‌اند.
+- مرحله بعد: APIهای خواندنی و فرم‌های ثبت درخواست در M2.
