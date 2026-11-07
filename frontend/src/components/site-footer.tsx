@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 bg-forest text-white">
+    <footer className="mt-24 bg-navy text-white">
       <div className="shell grid gap-10 py-14 md:grid-cols-3">
         <div><p className="text-xl font-black">Sabz Greenhouse</p><p className="mt-4 max-w-sm leading-8 text-white/65">بستر معرفی خدمات تخصصی و تجهیزات گلخانه‌ای؛ اطلاعات رسمی تماس و مجوزها پس از تأیید مجموعه درج می‌شوند.</p></div>
         <div><p className="font-bold text-gold">دسترسی سریع</p><div className="mt-4 flex flex-col gap-3 text-white/70"><Link href="/products">کاتالوگ محصولات</Link><Link href="/services">خدمات تخصصی</Link><Link href="/projects">پروژه‌ها</Link></div></div>
