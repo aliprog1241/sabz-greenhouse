@@ -41,4 +41,3 @@ npm run build
 ```
 
 هیچ secret واقعی نباید commit شود. فایل `.env` محلی است و از Git خارج شده است.
-
