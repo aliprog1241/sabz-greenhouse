@@ -14,3 +14,7 @@ urlpatterns = [
     path("api/v1/", include("apps.leads.urls")),
 ]
 
+admin.site.site_header = "مدیریت سبز گلخانه"
+admin.site.site_title = "سبز گلخانه"
+admin.site.index_title = "مدیریت محتوا و درخواست‌ها"
+

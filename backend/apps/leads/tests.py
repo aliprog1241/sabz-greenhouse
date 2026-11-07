@@ -6,6 +6,10 @@ from .models import QuoteRequest
 from .models import ConsultationRequest
 from rest_framework.test import APITestCase
 from django.core.cache import cache
+from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.test import RequestFactory
+from .admin import QuoteRequestAdmin
 
 class QuoteRequestModelTests(TestCase):
     def test_product_snapshot_is_created_server_side(self):
@@ -87,3 +91,36 @@ class LeadSubmissionApiTests(APITestCase):
         ]
         self.assertTrue(all(response.status_code == 201 for response in responses[:10]))
         self.assertEqual(responses[10].status_code, 429)
+
+
+class LeadAdminTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name="تجهیزات", slug="admin-equipment")
+        product = Product.objects.create(
+            category=category, name="فن مدیریتی", slug="admin-fan", unit="دستگاه"
+        )
+        self.quote = QuoteRequest.objects.create(
+            product=product,
+            full_name="کاربر پنل",
+            phone="09121234567",
+            province="تهران",
+            quantity=1,
+            privacy_accepted=True,
+        )
+        self.model_admin = QuoteRequestAdmin(QuoteRequest, admin.site)
+        self.request = RequestFactory().get("/admin/")
+        self.request.user = get_user_model().objects.create_superuser(
+            username="admin", email="admin@example.com", password="test-pass"
+        )
+
+    def test_submitted_leads_cannot_be_added_or_deleted_in_admin(self):
+        self.assertFalse(self.model_admin.has_add_permission(self.request))
+        self.assertFalse(self.model_admin.has_delete_permission(self.request, self.quote))
+
+    def test_only_status_and_internal_notes_are_editable_after_submission(self):
+        readonly = self.model_admin.get_readonly_fields(self.request, self.quote)
+
+        self.assertIn("phone", readonly)
+        self.assertIn("product", readonly)
+        self.assertNotIn("status", readonly)
+        self.assertNotIn("admin_notes", readonly)
