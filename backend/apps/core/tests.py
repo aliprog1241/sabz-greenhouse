@@ -8,3 +8,7 @@ class HealthCheckTests(APISimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["status"], "ok")
+
+    def test_openapi_schema_is_available(self):
+        response = self.client.get("/api/schema/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

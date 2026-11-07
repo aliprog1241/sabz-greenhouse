@@ -1,4 +1,5 @@
 import secrets
+from decimal import Decimal
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from apps.core.models import TimeStampedModel
@@ -38,7 +39,7 @@ class ConsultationRequest(LeadBase):
     service = models.ForeignKey(Service, null=True, blank=True, on_delete=models.SET_NULL,
                                 related_name="consultation_requests", verbose_name="خدمت")
     crop_type = models.CharField(max_length=150, verbose_name="نوع کشت")
-    greenhouse_area = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(0.01)],
+    greenhouse_area = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))],
                                            verbose_name="مساحت گلخانه")
     cultivation_method = models.CharField(max_length=150, blank=True, verbose_name="روش کشت")
     problem_description = models.TextField(verbose_name="شرح مسئله")
@@ -55,7 +56,7 @@ class QuoteRequest(LeadBase):
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name="quote_requests", verbose_name="محصول")
     product_name_snapshot = models.CharField(max_length=200, editable=False, verbose_name="نام محصول هنگام ثبت")
     unit_snapshot = models.CharField(max_length=50, editable=False, verbose_name="واحد هنگام ثبت")
-    quantity = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(0.01)],
+    quantity = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))],
                                    verbose_name="تعداد")
     description = models.TextField(blank=True, verbose_name="توضیحات")
     privacy_accepted = models.BooleanField(verbose_name="پذیرش حریم خصوصی")
