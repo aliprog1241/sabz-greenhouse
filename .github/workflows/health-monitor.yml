@@ -1,0 +1,22 @@
+name: Staging health monitor
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    env:
+      HEALTH_URL: ${{ secrets.STAGING_HEALTH_URL }}
+    steps:
+      - name: Skip until staging is configured
+        if: env.HEALTH_URL == ''
+        run: echo "STAGING_HEALTH_URL is not configured; monitor skipped."
+      - name: Check staging health endpoint
+        if: env.HEALTH_URL != ''
+        run: curl --fail --silent --show-error --retry 3 --retry-all-errors --max-time 20 "$HEALTH_URL"

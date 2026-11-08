@@ -1,4 +1,4 @@
-name: sabz-greenhouse
+name: ${COMPOSE_PROJECT_NAME:-sabz-greenhouse}
 
 services:
   db:
@@ -41,20 +41,27 @@ services:
       backend:
         condition: service_healthy
 
-  nginx:
-    image: nginx:1.28-alpine
+  caddy:
+    image: caddy:2.11.9-alpine
     restart: unless-stopped
+    env_file: ${ENV_FILE:-.env.production}
     depends_on:
       - frontend
       - backend
     ports:
       - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+      - "${HTTPS_PORT:-443}:443/udp"
     volumes:
-      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - media_data:/var/www/media:ro
-      - static_data:/var/www/static:ro
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - media_data:/srv/media:ro
+      - static_data:/srv/static:ro
+      - caddy_data:/data
+      - caddy_config:/config
 
 volumes:
   postgres_data:
   media_data:
   static_data:
+  caddy_data:
+  caddy_config:
