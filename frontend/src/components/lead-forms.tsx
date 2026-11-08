@@ -1,13 +1,13 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { API_BASE } from "@/lib/api";
+import { PUBLIC_API_BASE } from "@/lib/api";
 import type { Service, SubmissionResponse } from "@/types/api";
 
 type FormState = { loading: boolean; success?: SubmissionResponse; error?: string };
 
 async function submit(path: string, payload: Record<string, unknown>) {
-  const response = await fetch(`${API_BASE}${path}`, {
+  const response = await fetch(`${PUBLIC_API_BASE}${path}`, {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
   });
   const data = await response.json();
